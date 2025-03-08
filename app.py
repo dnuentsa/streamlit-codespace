@@ -7,18 +7,23 @@ df = pd.read_csv("datasets/trips_data.csv")
 st.write(" Preview Uploaded data")
 st.dataframe(df.head())
 
+# Get  the car brand from a selection box from the user 
+car_brand = st.sidebar.selectbox("Select the car brand", df["car_brand"].unique())
+# Filter per car brand
+df = df[df["car_brand"] == car_brand]
+
 # Chart 1: Bar chart of customers by country
 st.subheader("Customers by City")
 country_counts = df['customer_city'].value_counts()
 st.write(country_counts)
 st.bar_chart(country_counts)
 
-# Chart 2: Line chart of Tripvcs over time
-st.subheader("Subscriptions Over Time")
+# Chart 2: Line chart of Trips over time
+st.subheader("Trips Over Time")
 df['Trips Date'] = pd.to_datetime(df['pickup_time']).dt.date
-subscriptions_by_date = df.groupby('Trips Date').size().reset_index(name='Count')
-st.write(subscriptions_by_date)
-st.line_chart(subscriptions_by_date, x="Trips Date", y="Count")
+Trips_Count = df["Trips Date"].value_counts()
+st.write(Trips_Count)
+st.line_chart(Trips_Count)
 
 
 
