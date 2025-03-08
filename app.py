@@ -1,34 +1,77 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
 
-st.title("My Streamlit Web App")
+st.title("Manipulate Streamlit Chart")
 
-
-# Contents in  a sidebar
-with st.sidebar:
-    st.header("This is a sidebar Section")
-    user_input = st.text_input("Enter your name")
-    option = st.selectbox("Choose an option", ["Choice A", "Choice B", "Choice C"])
-
-# Contents in the main window
-st.header("This is the main section")
-# Display user input
-st.write(f"Hello, {user_input}! You selected option {option}.")
+# Generate random data 
+bar_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
+st.bar_chart(bar_data)
 
 
-# Adding Contents in multiple columns
-col1, col2 = st.columns(2)
-with col1:
-    st.subheader("Column 1")
-    st.button("Click me!")
-    st.write("This is some text in column 1")
+# Generate random data for line chart
+line_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
+st.line_chart(line_data)
 
-with col2:
-    st.subheader("Column 2")
-    st.line_chart({"data": [1, 5, 2, 6, 2, 1]})
+# Generate random data for scatter chart
+chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
+st.scatter_chart(chart_data)
 
-# Expandable section
-with st.expander("See explanation"):
-    st.write("This is an expandable section with additional information.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#st.title("User CSV File Viewer")
+
+# Request the user to Upload the File 
+# uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+# if uploaded_file:
+#     df = pd.read_csv(uploaded_file)
+#     st.write("Here is the preview of the Uploaded CSV: ")
+#     st.dataframe(df.head())
+
+#     # Chart 1: Bar chart of customers by country
+#     st.subheader("Customers by City")
+#     country_counts = df['customer_city'].value_counts()
+#     st.write(country_counts)
+#     st.bar_chart(country_counts)
+
+#     # Chart 2: Line chart of subscriptions over time
+#     st.subheader("Trips Over Time")
+#     df['Trip Date'] = pd.to_datetime(df['pickup_time']).dt.date
+#     subscriptions_by_date = df.groupby('Trip Date').size().reset_index(name='Count')
+#     st.line_chart(subscriptions_by_date.set_index('Trip Date'))
 
 
 
