@@ -7,10 +7,9 @@ df = pd.read_csv("datasets/trips_data.csv")
 st.write(" Preview Uploaded data")
 st.dataframe(df.head())
 
-# Get  the car brand from a selection box from the user 
-car_brand = st.sidebar.selectbox("Select the car brand", df["car_brand"].unique())
-# Filter per car brand
-df = df[df["car_brand"] == car_brand]
+
+cars_brand = st.sidebar.multiselect("Select the car brand", df["car_brand"].unique(),  df["car_brand"].unique())
+df = df[df["car_brand"].isin(cars_brand)]
 
 # Chart 1: Bar chart of customers by country
 st.subheader("Customers by City")
