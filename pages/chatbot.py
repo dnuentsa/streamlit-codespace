@@ -3,8 +3,6 @@ import pandas as pd
 
 # Load Data
 df = pd.read_csv("datasets/trips_data_1000.csv")
-
-
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -15,8 +13,8 @@ for message in st.session_state.messages:
         st.write(message["content"])
 
 # Chatbot UI
-st.title("🤖 Trip Data Chatbot")
-st.write("Ask me about trips, revenue, or distance! (e.g., 'Total revenue in January?')")
+st.title("Trip Data Chatbot")
+st.write("Ask me about trips, revenue, or average trip distance! (e.g., 'What is the total revenue')")
 
 # User Input
 user_query = st.chat_input("Type your question...")
