@@ -29,32 +29,35 @@ filtered_df = df[(df['trip_date'] >= start_date) & (df['trip_date'] <= end_date)
 st.write(f"Showing data from **{start_date}** to **{end_date}**")
 st.write(filtered_df)
 ``` 
-### Using a slide for date range selection
-# Load Data
+### Showcase the metric delta variation
+
 ```python
 import streamlit as st
 import pandas as pd
+
+# Load Data
 df = pd.read_csv("trips_data_2024.csv")
 df['pickup_time'] = pd.to_datetime(df['pickup_time'])
-df['trip_date'] = df['pickup_time'].dt.date  # Extract only the date
+df['trip_month'] = df['pickup_time'].dt.to_period("M")  # Extract month (Year-Month format)
 
-# Define min and max date
-min_date = df['trip_date'].min()
-max_date = df['trip_date'].max()
+# Get Unique Months for Selection
+available_months = df['trip_month'].astype(str).unique()
 
-# Create date range slider
-start_date, end_date = st.slider(
-    "Select Date Range",
-    min_value=min_date,
-    max_value=max_date,
-    value=(min_date, max_date),  # Default to full range
-    format="YYYY-MM-DD"
-)
+# Select a Month
+selected_month = st.selectbox("Select a Month", available_months, index=len(available_months)-1)
 
-# Filter dataframe based on selected dates
-filtered_df = df[(df['trip_date'] >= start_date) & (df['trip_date'] <= end_date)]
+# Convert to Period format for filtering
+selected_period = pd.Period(selected_month)
 
-# Display results
-st.write(f"Showing data from **{start_date}** to **{end_date}**")
-st.write(filtered_df)
+# Filter Data for Selected Month and Previous Month
+current_month_df = df[df['trip_month'] == selected_period]
+previous_month_df = df[df['trip_month'] == (selected_period - 1)]
+
+# Compute Metrics
+current_revenue = round(current_month_df['revenue'].sum(), 2)
+previous_revenue = round(previous_month_df['revenue'].sum(), 2) if not previous_month_df.empty else 0
+revenue_delta = current_revenue - previous_revenue
+
+# Display Metrics in Streamlit
+st.metric(label=f"Total Revenue for {selected_month}", value=f"${current_revenue:,}", delta=f"${revenue_delta:,}")
 ```

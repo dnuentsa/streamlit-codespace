@@ -12,7 +12,7 @@ df = df[df["car_brand"].isin(cars_brand)]
 
 col1, col2, col3, col4  = st.columns(4)
 
-col1.metric("Car Models in Use", df.shape[0],, border=True)
+col1.metric("Number of Trips", df.shape[0], border=True)
 col2.metric("Unique Customers",  df["customer_email"].nunique(),border=True)
 with col3:
     total_distance = df['distance'].sum() / 1000
