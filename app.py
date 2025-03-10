@@ -12,14 +12,14 @@ df = df[df["car_brand"].isin(cars_brand)]
 
 col1, col2, col3, col4  = st.columns(4)
 
-col1.metric("Car Models in Use", df.shape[0])
-col2.metric("Unique Customers",  df["customer_email"].nunique())
+col1.metric("Car Models in Use", df.shape[0],, border=True)
+col2.metric("Unique Customers",  df["customer_email"].nunique(),border=True)
 with col3:
     total_distance = df['distance'].sum() / 1000
-    st.metric("Total Distance", value=f"{total_distance:.2f} K")
+    st.metric("Total Distance", value=f"{total_distance:.2f} K", border=True)
 with col4:
     average_revenue = df['revenue'].mean()
-    st.metric("Average Revenue Per Trip", value=f"{average_revenue:.2f} €")
+    st.metric("Average Revenue Per Trip", value=f"{average_revenue:.2f} €", border=True)
 
 
 
