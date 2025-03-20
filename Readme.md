@@ -61,65 +61,64 @@ st.write(subscriptions_by_date)
 st.line_chart(subscriptions_by_date, x="Trips Date", y="Count")
 
 ```
-## Date Range Selection and Filtering
-### Using a date_input for date range selection
-The following Python snippet allows users to **select a date range** and dynamically filter the trip dataset:
+## A Complete dashboard with filtering mechanisms
 
 ```python
 import streamlit as st
 import pandas as pd
 
+st.set_page_config(layout="wide")
+st.title("Visualize CSV Data with Streamlit ")
 
-df = pd.read_csv("dataset.csv")
-df['pickup_time'] = pd.to_datetime(df['pickup_time'])
-df['trip_date'] = df['pickup_time'].dt.date  # Extract date for filtering
+df = pd.read_csv("datasets/trips_data_1000.csv")
+print(df.describe())
 
-# Create date range input
-start_date, end_date = st.date_input(
-    "Select Date Range", 
-    [df['trip_date'].min(), df['trip_date'].max()],  # Default to full range
-    min_value=df['trip_date'].min(), 
-    max_value=df['trip_date'].max()
-)
+cars_brand = st.sidebar.multiselect("Select the car brand", df["car_brand"].unique(),  df["car_brand"].unique())
+df = df[df["car_brand"].isin(cars_brand)]
 
-# Filter dataframe based on selected dates
-filtered_df = df[(df['trip_date'] >= start_date) & (df['trip_date'] <= end_date)]
+col1, col2, col3, col4  = st.columns(4)
 
-# Display results
-st.write(f"Showing data from **{start_date}** to **{end_date}**")
-st.write(filtered_df)
+col1.metric("Car Models in Use", df.shape[0])
+col2.metric("Unique Customers",  df["customer_email"].nunique())
+with col3:
+    total_distance = df['distance'].sum() / 1000
+    st.metric("Total Distance", value=f"{total_distance:.2f} K")
+with col4:
+    average_revenue = df['revenue'].mean()
+    st.metric("Average Revenue Per Trip", value=f"{average_revenue:.2f} €")
 
+col1, col2, col3 = st.columns(3)
+# Chart 1: Bar chart of customers by country
+with col1:
+    st.subheader("Customers by City")
+    country_counts = df['customer_city'].value_counts()
+    st.bar_chart(country_counts)
 
-### Showcase the metric delta variation
-```python
-import streamlit as st
-import pandas as pd
+# Chart 2 : Revenue by Car Model
+with col2:
+    st.subheader("Revenue by Car Model")
+    revenue_by_car = df.groupby('car_model')['revenue'].sum()
+    st.bar_chart(revenue_by_car)
+# Chart 3 : Average Trip distance per city
+with col3:
+    st.subheader("Average Trip Distance per city")
+    avg_distance_by_city = df.groupby('customer_city')['distance'].mean()
+    st.bar_chart(avg_distance_by_city)
+# Convert the pickup time to a date type column 
+df['Trips Date'] = pd.to_datetime(df['pickup_time']).dt.date
 
-# Load Data
-df = pd.read_csv("trips_data_2024.csv")
-df['pickup_time'] = pd.to_datetime(df['pickup_time'])
-df['trip_month'] = df['pickup_time'].dt.to_period("M")  # Extract month (Year-Month format)
+# Chart 3: Revenue over time 
+st.subheader("Revenue Over Time")
+revenue_over_time = df.groupby('Trips Date')['revenue'].sum()
+st.area_chart(revenue_over_time)
 
-# Get Unique Months for Selection
-available_months = df['trip_month'].astype(str).unique()
+# Chart 4: Line chart of Trips over time
+st.subheader("Trips Over Time")
+Trips_Count = df["Trips Date"].value_counts()
+st.line_chart(Trips_Count)
 
-# Select a Month
-selected_month = st.selectbox("Select a Month", available_months, index=len(available_months)-1)
-
-# Convert to Period format for filtering
-selected_period = pd.Period(selected_month)
-
-# Filter Data for Selected Month and Previous Month
-current_month_df = df[df['trip_month'] == selected_period]
-previous_month_df = df[df['trip_month'] == (selected_period - 1)]
-
-# Compute Metrics
-current_revenue = round(current_month_df['revenue'].sum(), 2)
-previous_revenue = round(previous_month_df['revenue'].sum(), 2) if not previous_month_df.empty else 0
-revenue_delta = current_revenue - previous_revenue
-
-# Display Metrics in Streamlit
-st.metric(label=f"Total Revenue for {selected_month}", value=f"${current_revenue:,}", delta=f"${revenue_delta:,}")
+st.write(" Preview Uploaded data")
+st.dataframe(df.head())
 ```
 
 ## Chatbot with Streamlit 
