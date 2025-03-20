@@ -10,6 +10,7 @@ print(df.describe())
 cars_brand = st.sidebar.multiselect("Select the car brand", df["car_brand"].unique(),  df["car_brand"].unique())
 df = df[df["car_brand"].isin(cars_brand)]
 
+
 col1, col2, col3, col4  = st.columns(4)
 
 col1.metric("Number of Trips", df.shape[0], border=True)
